@@ -19,3 +19,25 @@ def test_apply_discount():
     assert Item.all
 
 
+def test_name_property():
+    item = Item("Телефон", 10000, 5)
+    assert item.name == "Телефон"
+
+    item.name = "Длинное_название"
+    assert item.name == "Длинное_на"
+
+
+def test_instantiate_from_csv():
+    assert len(Item.all) == 5
+    assert Item.all[0].name == 'Смартфон'
+    assert Item.string_to_number('5') == 5
+    assert Item.string_to_number('5.0') == 5
+    assert Item.string_to_number('5.5') == 5
+
+
+def test_string_to_number():
+    result = Item.string_to_number("5.7")
+    assert result == 5
+
+
+
