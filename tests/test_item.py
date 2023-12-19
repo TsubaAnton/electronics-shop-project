@@ -1,15 +1,22 @@
 """Здесь надо написать тесты с использованием pytest для модуля item."""
+import pytest
 from src.item import Item
 
 
-def test_calculate_total_price():
+@pytest.fixture
+def setup_items():
+    Item.all = []
+    Item.pay_rate = 1.0
+
+
+def test_calculate_total_price(setup_items):
     item1 = Item("Смартфон", 10000, 20)
     item2 = Item("Ноутбук", 20000, 5)
     assert item1.calculate_total_price() == 200000
     assert item2.calculate_total_price() == 100000
 
 
-def test_apply_discount():
+def test_apply_discount(setup_items):
     item1 = Item("Смартфон", 10000, 20)
     item2 = Item("Ноутбук", 20000, 5)
     Item.pay_rate = 0.8
@@ -19,7 +26,7 @@ def test_apply_discount():
     assert Item.all
 
 
-def test_name_property():
+def test_name_property(setup_items):
     item = Item("Телефон", 10000, 5)
     assert item.name == "Телефон"
 
@@ -27,7 +34,8 @@ def test_name_property():
     assert item.name == "Длинное_на"
 
 
-def test_instantiate_from_csv():
+def test_instantiate_from_csv(setup_items):
+    Item.instantiate_from_csv(r'C:\Users\onton\PycharmProjects\electronics-shop-project\src\items.csv')
     assert len(Item.all) == 5
     assert Item.all[0].name == 'Смартфон'
     assert Item.string_to_number('5') == 5

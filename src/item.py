@@ -1,4 +1,5 @@
 import csv
+import os
 
 
 class Item:
@@ -48,11 +49,15 @@ class Item:
         return self.price
 
     @classmethod
-    def instantiate_from_csv(cls):
+    def instantiate_from_csv(cls, file_path):
         """
-        Инициализирует экземпляры класса Item данными из файла src/items.csv.
+        созданиеn объектs из данных файла
         """
-        with open('src/items.csv', 'r') as file:
+        cls.all = []
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(current_dir, 'items.csv')
+
+        with open(file_path, 'r', encoding='cp1251') as file:
             reader = csv.DictReader(file)
             for row in reader:
                 name = row['name']
