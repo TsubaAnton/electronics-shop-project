@@ -54,8 +54,6 @@ class Item:
         созданиеn объектs из данных файла
         """
         cls.all = []
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(current_dir, 'items.csv')
 
         with open(file_path, 'r', encoding='cp1251') as file:
             reader = csv.DictReader(file)

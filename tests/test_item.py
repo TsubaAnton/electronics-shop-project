@@ -1,5 +1,6 @@
 """Здесь надо написать тесты с использованием pytest для модуля item."""
 import pytest
+import os
 from src.item import Item
 
 
@@ -35,7 +36,10 @@ def test_name_property(setup_items):
 
 
 def test_instantiate_from_csv(setup_items):
-    Item.instantiate_from_csv(r'C:\Users\onton\PycharmProjects\electronics-shop-project\src\items.csv')
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_path = os.path.join(current_dir, '..', 'src', 'items.csv')
+
+    Item.instantiate_from_csv(csv_path)
     assert len(Item.all) == 5
     assert Item.all[0].name == 'Смартфон'
     assert Item.string_to_number('5') == 5
