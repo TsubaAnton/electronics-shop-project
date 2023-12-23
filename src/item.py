@@ -69,3 +69,9 @@ class Item:
         Возвращает число из числа-строки.
         """
         return int(float(value))
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}('{self.name}', {self.price}, {self.quantity})"
+
+    def __str__(self):
+        return f"{self.name}"
