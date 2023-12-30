@@ -4,6 +4,7 @@ import os
 from src.item import Item
 
 
+
 @pytest.fixture
 def setup_items():
     Item.all = []
@@ -61,3 +62,27 @@ def test_item_str():
     item1 = Item("Смартфон", 10000, 20)
     assert str(item1) == 'Смартфон'
 
+
+def test_add_items(setup_items):
+    item1 = Item("Лампа", 500, 10)
+    item2 = Item("Ноутбук", 20000, 5)
+
+    result = item1 + item2
+    assert result == 15
+
+
+def test_add_items_with_discount(setup_items):
+    item1 = Item("Лампа", 500, 10)
+    item2 = Item("Ноутбук", 20000, 5)
+    Item.pay_rate = 0.8
+
+    result = item1 + item2
+    assert result == 15
+
+
+def test_add_non_item_instance(setup_items):
+    item1 = Item("Лампа", 500, 10)
+    phone = "Смартфон"
+
+    with pytest.raises(TypeError, match="Можно складывать только экземпляры классов Item"):
+        result = item1 + phone

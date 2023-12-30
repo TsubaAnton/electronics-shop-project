@@ -75,3 +75,8 @@ class Item:
 
     def __str__(self):
         return f"{self.name}"
+
+    def __add__(self, other):
+        if not isinstance(other, Item):
+            raise TypeError("Можно складывать только экземпляры классов Item")
+        return self.quantity + other.quantity
