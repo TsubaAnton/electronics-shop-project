@@ -1,8 +1,8 @@
 """Здесь надо написать тесты с использованием pytest для модуля item."""
+import re
 import pytest
 import os
-from src.item import Item
-
+from src.item import Item, InstantiateCSVError
 
 
 @pytest.fixture
@@ -40,7 +40,7 @@ def test_instantiate_from_csv(setup_items):
     current_dir = os.path.dirname(os.path.abspath(__file__))
     csv_path = os.path.join(current_dir, '..', 'src', 'items.csv')
 
-    Item.instantiate_from_csv(csv_path)
+    Item.instantiate_from_csv()
     assert len(Item.all) == 5
     assert Item.all[0].name == 'Смартфон'
     assert Item.string_to_number('5') == 5
@@ -86,3 +86,19 @@ def test_add_non_item_instance(setup_items):
 
     with pytest.raises(TypeError, match="Можно складывать только экземпляры классов Item"):
         result = item1 + phone
+
+
+def test_exp_from_csv_file(tmp_path):
+    filedir = os.path.dirname(os.path.abspath(__file__))
+    csv_path = os.path.join(filedir, '..', 'src', 'items2.csv')
+
+    with pytest.raises(FileNotFoundError, match=f"Отсутствует файл {re.escape(csv_path)}"):
+        Item.instantiate_from_csv(file_path=csv_path)
+
+
+def test_check_columns_in_csv(tmp_path):
+    filedir = os.path.dirname(os.path.abspath(__file__))
+    csv_path = os.path.join(filedir, '..', 'src', 'items1.csv')
+
+    with pytest.raises(InstantiateCSVError, match="Файл items.csv поврежден"):
+        Item.instantiate_from_csv(file_path=csv_path)

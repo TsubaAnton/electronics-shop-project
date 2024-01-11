@@ -1,4 +1,12 @@
 import csv
+import os
+
+
+class InstantiateCSVError(Exception):
+    """
+    Исключение, выбрасываемое при ошибке при создании объектов из CSV файла.
+    """
+    pass
 
 
 class Item:
@@ -48,19 +56,43 @@ class Item:
         return self.price
 
     @classmethod
-    def instantiate_from_csv(cls, file_path):
+    def instantiate_from_csv(cls, file_path=None):
         """
-        созданиеn объектs из данных файла
+        Создание объектов из данных файла.
+
+        :param file_path: Путь к CSV файлу.
         """
         cls.all = []
+        required_columns = ['name', 'price', 'quantity']
 
-        with open(file_path, 'r', encoding='cp1251') as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                name = row['name']
-                price = float(row['price'])
-                quantity = int(row['quantity'])
-                cls(name, price, quantity)
+        try:
+            if file_path is None:
+                file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'items.csv')
+            with open(file_path, 'r+', encoding='windows-1251') as csv_file:
+                reader = csv.DictReader(csv_file)
+
+                # Проверяем, что все требуемые колонки присутствуют в заголовке CSV файла
+                if not all(column in reader.fieldnames for column in required_columns):
+                    raise InstantiateCSVError("Файл items.csv поврежден")
+
+                for row in reader:
+                    try:
+                        name = row['name']
+                        price = float(row['price'])
+
+                        # Проверяем наличие значений во всех необходимых колонках
+                        if any(row[column] is None for column in required_columns):
+                            raise InstantiateCSVError("Файл items.csv поврежден")
+
+                        quantity = int(row['quantity'])
+                        cls(name, price, quantity)
+                    except (KeyError, ValueError):
+                        raise InstantiateCSVError("Файл items.csv поврежден")
+        except FileNotFoundError as e:
+            print(f"Error: {e}")
+            raise FileNotFoundError(f"Отсутствует файл {file_path}")
+        except csv.Error:
+            raise InstantiateCSVError("Файл items.csv поврежден")
 
     @staticmethod
     def string_to_number(value: str) -> int:
